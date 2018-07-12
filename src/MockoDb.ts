@@ -9,6 +9,14 @@ const fs = {
   mkdir: promisify(fsCallback.mkdir)
 };
 
+/**
+ * Downloads the MongoDB binaries.
+ */
+export async function preload() {
+  const mockoDb = await MockoDb.boot();
+  await mockoDb.shutdown();
+}
+
 export class MockoDb {
   public static async boot() {
     const dataDir = path.join(__dirname, "mockodb");
