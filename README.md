@@ -1,5 +1,6 @@
 # MockoDB
 
+[![build status](https://travis-ci.org/Y0hy0h/mockodb.svg?branch=master)](https://travis-ci.org/Y0hy0h/mockodb)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://prettier.io/)
 
 An in-memory MongoDB as a mock in unit tests.
