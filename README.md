@@ -13,7 +13,6 @@ import { MockoDb } from "mockodb";
 import { MongoClient } from "mongodb"
 
 async function demo() {
-  // Boot up the db. Note that it might download mongodb binaries on first boot.
   const mockoDb = await MockoDb.boot();
 
   // You can now connect to the database:
@@ -23,6 +22,25 @@ async function demo() {
   // You need to take care of shutting down the db:
   await mockoDb.shutdown();
 }
+```
+
+### Preloading
+
+Note that `MockoDb.boot()` might attempt to download the MongoDB binaries on the
+first run. You can preload those libraries explicitly with the `preload()`
+function:
+
+```typescript
+import { preload } from "mockodb"
+
+describe('test suite', () => {
+  beforeAll(async () => {
+    jest.setTimeout(100_000); // Preload might take a while.
+    await preload();
+  });
+
+  // ...
+});
 ```
 
 [mongo-unit]: https://github.com/mikhail-angelov/mongo-unit
