@@ -1,7 +1,12 @@
-import { MockoDb } from "../../src";
+import { MockoDb, preload } from "../../src";
 import { MongoClient } from "mongodb";
 
 describe("mockodb", () => {
+  beforeAll(async () => {
+    jest.setTimeout(100_000); // Preload might take a while.
+    await preload();
+  });
+
   it("client can connect after boot", async () => {
     const url = "mongodb://localhost:27017";
     await expect(MongoClient.connect(url)).rejects.toThrowError(
