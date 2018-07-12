@@ -8,13 +8,20 @@
   "scripts": {
     "prepublish": "yarn run compile",
     "compile": "tsc",
+    "test:e2e": "jest --config ./test/e2e/jest.config.json",
     "precommit": "pretty-quick --staged",
     "postcommit": "git update-index -g"
   },
   "devDependencies": {
+    "@types/jest": "^23.1.5",
+    "@types/mongodb": "^3.1.1",
     "husky": "^0.14.3",
+    "jest": "^23.4.0",
+    "mongodb": "^3.0.11",
     "prettier": "^1.13.7",
     "pretty-quick": "^1.6.0",
+    "ts-jest": "^23.0.0",
+    "ts-loader": "^4.4.2",
     "typescript": "^2.9.2"
   }
 }
