@@ -14,7 +14,7 @@ describe("mockodb", () => {
     );
 
     const mockoDb = await MockoDb.boot();
-    expect(mockoDb.url).toEqual(url);
+    expect(mockoDb.url.href).toEqual(url);
 
     try {
       await expect(MongoClient.connect(url)).resolves.toBeInstanceOf(
@@ -30,14 +30,14 @@ describe("mockodb", () => {
     const url = mockoDb.url;
 
     try {
-      await expect(MongoClient.connect(url)).resolves.toBeInstanceOf(
+      await expect(MongoClient.connect(url.href)).resolves.toBeInstanceOf(
         MongoClient
       );
     } finally {
       await mockoDb.shutdown();
     }
 
-    await expect(MongoClient.connect(url)).rejects.toThrowError(
+    await expect(MongoClient.connect(url.href)).rejects.toThrowError(
       "failed to connect"
     );
   });

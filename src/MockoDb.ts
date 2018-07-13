@@ -3,6 +3,7 @@ import * as path from "path";
 import * as fsCallback from "fs";
 import { promisify } from "util";
 import { MongoClient } from "mongodb";
+import { URL } from "url";
 
 // Wrap in Promise
 const fs = {
@@ -31,13 +32,13 @@ export class MockoDb {
       }
     );
     await mongodHelper.run();
-    return new MockoDb(mongodHelper, "mongodb://localhost:27017");
+    return new MockoDb(mongodHelper, new URL("mongodb://localhost:27017"));
   }
 
-  constructor(private mongodHelper: MongodHelper, public url: Url) {}
+  constructor(private mongodHelper: MongodHelper, public url: URL) {}
 
   public async shutdown() {
-    const client = await MongoClient.connect(this.url);
+    const client = await MongoClient.connect(this.url.href);
     await client
       .db()
       .executeDbAdminCommand({ shutdown: 1 })
@@ -55,4 +56,3 @@ function ensureDir(path: Path) {
 }
 
 type Path = string;
-type Url = string;
