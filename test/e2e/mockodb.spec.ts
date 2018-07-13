@@ -16,48 +16,64 @@ describe("mockodb", () => {
     const mockoDb = await MockoDb.boot();
     expect(mockoDb.url).toEqual(url);
 
-    await expect(MongoClient.connect(url)).resolves.toBeInstanceOf(MongoClient);
-
-    await mockoDb.shutdown();
+    try {
+      await expect(MongoClient.connect(url)).resolves.toBeInstanceOf(
+        MongoClient
+      );
+    } finally {
+      await mockoDb.shutdown();
+    }
   });
 
   it("client cannot connect after shutdown", async () => {
     const mockoDb = await MockoDb.boot();
     const url = mockoDb.url;
 
-    await expect(MongoClient.connect(url)).resolves.toBeInstanceOf(MongoClient);
-
-    await mockoDb.shutdown();
+    try {
+      await expect(MongoClient.connect(url)).resolves.toBeInstanceOf(
+        MongoClient
+      );
+    } finally {
+      await mockoDb.shutdown();
+    }
 
     await expect(MongoClient.connect(url)).rejects.toThrowError(
       "failed to connect"
     );
   });
 
-  it("allows client to CRUD", async () => {
-    const mockoDb = await MockoDb.boot();
+  describe("prepared", () => {
+    let mockoDb: MockoDb;
 
-    const client = await MongoClient.connect(mockoDb.url.toString());
-    const db = client.db();
-    const collection = db.collection("e2eTest");
-
-    const entity = { insert: "me" };
-    await collection.insertOne(entity);
-    const [inserted] = await collection.find().toArray();
-    expect(inserted).toEqual(expect.objectContaining(entity));
-
-    const newEntity = { insert: "updated" };
-    await collection.updateOne(entity, {
-      $set: newEntity
+    beforeEach(async () => {
+      mockoDb = await MockoDb.boot();
     });
-    const [updated] = await collection.find().toArray();
-    expect(updated._id).toEqual(inserted._id);
-    expect(updated).toEqual(expect.objectContaining(newEntity));
 
-    await collection.deleteOne(updated);
-    const contents = await collection.find().toArray();
-    expect(contents.length).toEqual(0);
+    afterEach(async () => {
+      await mockoDb.shutdown();
+    });
 
-    await mockoDb.shutdown();
+    it("allows client to CRUD", async () => {
+      const client = await MongoClient.connect(mockoDb.url.toString());
+      const db = client.db();
+      const collection = db.collection("e2eTest");
+
+      const entity = { insert: "me" };
+      await collection.insertOne(entity);
+      const [inserted] = await collection.find().toArray();
+      expect(inserted).toEqual(expect.objectContaining(entity));
+
+      const newEntity = { insert: "updated" };
+      await collection.updateOne(entity, {
+        $set: newEntity
+      });
+      const [updated] = await collection.find().toArray();
+      expect(updated._id).toEqual(inserted._id);
+      expect(updated).toEqual(expect.objectContaining(newEntity));
+
+      await collection.deleteOne(updated);
+      const contents = await collection.find().toArray();
+      expect(contents.length).toEqual(0);
+    });
   });
 });
