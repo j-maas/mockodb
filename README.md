@@ -45,4 +45,10 @@ describe("test suite", () => {
 });
 ```
 
+### Download Directory
+
+MockoDB will download the MongoDB binaries into its folder. Therefore you can
+simply cache your `node_modules` on your CI, making it download the MongoDB
+binaries once on the first run and whenever you clear your cache.
+
 [mongo-unit]: https://github.com/mikhail-angelov/mongo-unit
