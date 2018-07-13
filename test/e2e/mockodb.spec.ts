@@ -1,5 +1,6 @@
 import { MockoDb, preload } from "../../src";
 import { MongoClient } from "mongodb";
+import { ListDatabasesResult } from "../../src/types/mongodb";
 
 describe("mockodb", () => {
   beforeAll(async () => {
@@ -54,7 +55,7 @@ describe("mockodb", () => {
     });
 
     it("allows client to CRUD", async () => {
-      const client = await MongoClient.connect(mockoDb.url.toString());
+      const client = await MongoClient.connect(mockoDb.url.href);
       const db = client.db();
       const collection = db.collection("e2eTest");
 
@@ -74,6 +75,37 @@ describe("mockodb", () => {
       await collection.deleteOne(updated);
       const contents = await collection.find().toArray();
       expect(contents.length).toEqual(0);
+    });
+
+    it("can reset all databases", async () => {
+      const client = await MongoClient.connect(mockoDb.url.href);
+      const dbs = [client.db("1"), client.db("2")];
+      await Promise.all(
+        dbs.map(async db => {
+          const collection = await db.createCollection("e2eTest");
+          await collection.insertOne({ insert: "me" });
+        })
+      );
+
+      const expectedNames = dbs.map(db => db.databaseName);
+      expect(await getActualDatabaseNames()).toEqual(
+        expect.arrayContaining(expectedNames)
+      );
+
+      await mockoDb.reset();
+
+      expect(await getActualDatabaseNames()).not.toEqual(
+        expect.arrayContaining(expectedNames)
+      );
+
+      async function getActualDatabaseNames() {
+        const result: ListDatabasesResult = await client
+          .db()
+          .admin()
+          .listDatabases();
+
+        return result.databases.map(db => db.name);
+      }
     });
   });
 });
