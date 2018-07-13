@@ -26,6 +26,6 @@
   },
   "dependencies": {
     "mongodb": "~3.0.11",
-    "mongodb-prebuilt": "^6.3.6"
+    "mongodb-prebuilt": "y0hy0h/mongodb-prebuilt#cca7e6445d97cfc74bb78fc38ea6f1dff8b9c529"
   }
 }
