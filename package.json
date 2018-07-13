@@ -22,6 +22,7 @@
     "pretty-quick": "^1.6.0",
     "ts-jest": "^23.0.0",
     "ts-loader": "^4.4.2",
+    "tslint": "^5.10.0",
     "typescript": "^2.9.2"
   },
   "dependencies": {
