@@ -9,6 +9,8 @@ const fs = {
   mkdir: promisify(fsCallback.mkdir)
 };
 
+const moduleDir = path.resolve(__dirname, "../");
+
 /**
  * Downloads the MongoDB binaries.
  */
@@ -19,15 +21,15 @@ export async function preload() {
 
 export class MockoDb {
   public static async boot() {
-    const dataDir = path.join(__dirname, "mockodb");
+    const dataDir = path.join(moduleDir, "mockodb-data");
     ensureDir(dataDir);
 
-    const mongodHelper = new MongodHelper([
-      "--dbpath",
-      dataDir,
-      "--storageEngine",
-      "ephemeralForTest"
-    ]);
+    const mongodHelper = new MongodHelper(
+      ["--dbpath", dataDir, "--storageEngine", "ephemeralForTest"],
+      {
+        downloadDir: path.join(moduleDir, "mockodb-download")
+      }
+    );
     await mongodHelper.run();
     return new MockoDb(mongodHelper, "mongodb://localhost:27017");
   }
