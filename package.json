@@ -1,6 +1,6 @@
 {
   "name": "mockodb",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "An in-memory MongoDB as a mock in unit tests.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
