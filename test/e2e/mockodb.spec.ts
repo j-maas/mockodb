@@ -1,5 +1,6 @@
 import { MockoDb, preload } from "../../src";
 import { MongoClient } from "mongodb";
+import { ListDatabasesResult } from "../../src/types/mongodb";
 
 describe("mockodb", () => {
   beforeAll(async () => {
@@ -14,50 +15,97 @@ describe("mockodb", () => {
     );
 
     const mockoDb = await MockoDb.boot();
-    expect(mockoDb.url).toEqual(url);
+    expect(mockoDb.url.href).toEqual(url);
 
-    await expect(MongoClient.connect(url)).resolves.toBeInstanceOf(MongoClient);
-
-    await mockoDb.shutdown();
+    try {
+      await expect(MongoClient.connect(url)).resolves.toBeInstanceOf(
+        MongoClient
+      );
+    } finally {
+      await mockoDb.shutdown();
+    }
   });
 
   it("client cannot connect after shutdown", async () => {
     const mockoDb = await MockoDb.boot();
     const url = mockoDb.url;
 
-    await expect(MongoClient.connect(url)).resolves.toBeInstanceOf(MongoClient);
+    try {
+      await expect(MongoClient.connect(url.href)).resolves.toBeInstanceOf(
+        MongoClient
+      );
+    } finally {
+      await mockoDb.shutdown();
+    }
 
-    await mockoDb.shutdown();
-
-    await expect(MongoClient.connect(url)).rejects.toThrowError(
+    await expect(MongoClient.connect(url.href)).rejects.toThrowError(
       "failed to connect"
     );
   });
 
-  it("allows client to CRUD", async () => {
-    const mockoDb = await MockoDb.boot();
+  describe("prepared", () => {
+    let mockoDb: MockoDb;
 
-    const client = await MongoClient.connect(mockoDb.url.toString());
-    const db = client.db();
-    const collection = db.collection("e2eTest");
-
-    const entity = { insert: "me" };
-    await collection.insertOne(entity);
-    const [inserted] = await collection.find().toArray();
-    expect(inserted).toEqual(expect.objectContaining(entity));
-
-    const newEntity = { insert: "updated" };
-    await collection.updateOne(entity, {
-      $set: newEntity
+    beforeEach(async () => {
+      mockoDb = await MockoDb.boot();
     });
-    const [updated] = await collection.find().toArray();
-    expect(updated._id).toEqual(inserted._id);
-    expect(updated).toEqual(expect.objectContaining(newEntity));
 
-    await collection.deleteOne(updated);
-    const contents = await collection.find().toArray();
-    expect(contents.length).toEqual(0);
+    afterEach(async () => {
+      await mockoDb.shutdown();
+    });
 
-    await mockoDb.shutdown();
+    it("allows client to CRUD", async () => {
+      const client = await MongoClient.connect(mockoDb.url.href);
+      const db = client.db();
+      const collection = db.collection("e2eTest");
+
+      const entity = { insert: "me" };
+      await collection.insertOne(entity);
+      const [inserted] = await collection.find().toArray();
+      expect(inserted).toEqual(expect.objectContaining(entity));
+
+      const newEntity = { insert: "updated" };
+      await collection.updateOne(entity, {
+        $set: newEntity
+      });
+      const [updated] = await collection.find().toArray();
+      expect(updated._id).toEqual(inserted._id);
+      expect(updated).toEqual(expect.objectContaining(newEntity));
+
+      await collection.deleteOne(updated);
+      const contents = await collection.find().toArray();
+      expect(contents.length).toEqual(0);
+    });
+
+    it("can reset all databases", async () => {
+      const client = await MongoClient.connect(mockoDb.url.href);
+      const dbs = [client.db("1"), client.db("2")];
+      await Promise.all(
+        dbs.map(async db => {
+          const collection = await db.createCollection("e2eTest");
+          await collection.insertOne({ insert: "me" });
+        })
+      );
+
+      const expectedNames = dbs.map(db => db.databaseName);
+      expect(await getActualDatabaseNames()).toEqual(
+        expect.arrayContaining(expectedNames)
+      );
+
+      await mockoDb.reset();
+
+      expect(await getActualDatabaseNames()).not.toEqual(
+        expect.arrayContaining(expectedNames)
+      );
+
+      async function getActualDatabaseNames() {
+        const result: ListDatabasesResult = await client
+          .db()
+          .admin()
+          .listDatabases();
+
+        return result.databases.map(db => db.name);
+      }
+    });
   });
 });
