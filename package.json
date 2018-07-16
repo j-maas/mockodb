@@ -11,7 +11,7 @@
     "mockodb-preload": "./scripts/preload.js"
   },
   "scripts": {
-    "prepublish": "yarn run compile",
+    "prepare": "yarn run compile",
     "compile": "tsc",
     "test:e2e": "jest --config ./test/e2e/jest.config.json",
     "precommit": "pretty-quick --staged",
