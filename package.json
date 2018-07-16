@@ -1,6 +1,6 @@
 {
   "name": "mockodb",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "An in-memory MongoDB as a mock in unit tests.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -28,6 +28,6 @@
   },
   "dependencies": {
     "mongodb": "~3.0.11",
-    "mongodb-prebuilt": "y0hy0h/mongodb-prebuilt#cca7e6445d97cfc74bb78fc38ea6f1dff8b9c529"
+    "mongodb-prebuilt": "y0hy0h/mongodb-prebuilt#1a5821446426570946f42277b145fe7a81baa696"
   }
 }

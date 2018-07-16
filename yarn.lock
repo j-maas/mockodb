@@ -2458,9 +2458,9 @@ mongodb-download@^2.2.6:
     request-promise "^4.1.1"
     yargs "^3.26.0"
 
-mongodb-prebuilt@y0hy0h/mongodb-prebuilt#cca7e6445d97cfc74bb78fc38ea6f1dff8b9c529:
+mongodb-prebuilt@y0hy0h/mongodb-prebuilt#1a5821446426570946f42277b145fe7a81baa696:
   version "6.4.5"
-  resolved "https://codeload.github.com/y0hy0h/mongodb-prebuilt/tar.gz/cca7e6445d97cfc74bb78fc38ea6f1dff8b9c529"
+  resolved "https://codeload.github.com/y0hy0h/mongodb-prebuilt/tar.gz/1a5821446426570946f42277b145fe7a81baa696"
   dependencies:
     debug "^2.2.0"
     glob "^7.1.1"
