@@ -2,6 +2,16 @@
   "name": "mockodb",
   "version": "0.4.1",
   "description": "In-memory mock for MongoDB in unit tests.",
+  "keywords": [
+    "mongodb",
+    "mongo",
+    "mock",
+    "unit test",
+    "test",
+    "testing",
+    "in-memory",
+    "fast"
+  ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "author": "Y0hy0h",
