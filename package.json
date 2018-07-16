@@ -6,6 +6,10 @@
   "types": "dist/index.d.ts",
   "author": "Y0hy0h",
   "license": "MIT",
+  "repository": "y0hy0h/mockodb",
+  "bin": {
+    "mockodb-preload": "./scripts/preload.js"
+  },
   "scripts": {
     "prepublish": "yarn run compile",
     "compile": "tsc",
