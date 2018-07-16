@@ -1,14 +1,23 @@
 language: node_js
 
 node_js:
-  - "node"
-  - "lts/*"
+  - node
+  - lts/*
 
 cache:
   yarn: true
   directories:
-    - "node_modules"
-    - "mockodb-download"
+    - node_modules
+    - mockodb-download
 
 script:
   - yarn run test:e2e
+
+deploy:
+  provider: npm
+  email:
+    secure: ntb5mhVBm9dRgWJuGECiXaX0jWa1f50eJjzFOiWUFc1MT2ZNzxK9vMEUbCAvpRZ+uxUa3QbYqAUhB9JottHONMaEhEvItGm4IxBRspfvST00kLJxRn1f9zjQ0oP+x+W1Mas5rjxurIAc4LlfQ0b7tGhUpSHoICaTVCoWjVPYsIUPxxGFRFeFEJtFAvc/jsUC2JX2cAV71vgtDSBvHkHGvgBo6cIpoKwweXQoD3VhD8PI9qQtKI2SPuxcmPo5pc8xT9SeRTbcUJjpmnRGbnXZigHJW+AiEgAP/e/FsWeNQHnB1MNjEJlNEN6pfnO5yVSCSPRi2r8PwrVVt396MPSNAezPrJjVAQ+Fyc3Kalj94hRW4vkkTlJp57XKPgHVOKCltkSQA0beVwCW+bVCoPZpq5iLOX3Az/j66uNyGsVW3Su6SUAtHe2ptqwVSqRPPRnUnU1/bdFZ4olPYViTrIXzE9jsf7hDAyS0GpYgfxSz4IU8llMOGPsXjl0/KDHsFJXLVgJQR1UyeSOd+BcUw0TBB9SefBcPQmGbwkL3z4VBlcOzTMwK8oQufV777FCDR9yUHQeLxWLc2ct7CpgyoSVzNUOsOY80FRckp9klkq/egwm5zV+53tQcrYtPZFGkP7jqM2k9xaVjUFjmN6piB11pgqG5lRhRJ4KkgYm2wdJQLj8=
+  api_key:
+    secure: 5FLxpInEAZhEe7UIRpJD/S61014LkEojPhqKTthNBY7OGxF63/rGDr+5eMMCefoY58p5M5iPohijj96emmE13GGsMRLRdDNa0EPfqunY5BOMNE7+xPDtJOO0nZyvtVU5B1zy12EaGtKuk4MPvhQx/13Xyheoq05RlIEHwqB3FWhCTQYQpQ74NanLsf2Uq4uJf214U42iOzDaXbqkaCgWppZDtQzy7Z17esRKrkZvRi5YfuFC34GKZedevqPq4HYOmpcSVTB4qRw+1elF+usmx0br2Saz59URG32UyN0PBbony0DW6vlmdh2cJCjqFKDLpUYDVggZ+gVa3PAOd4lUfZ6Wur/fdIW96NuN4LJtbdPJqA9Qc5IHZRJ8RGUrsE9gxzqyW3LcD0sFH4axA/prCn/zYvgtUvhEWpuFj1fjgstQ6FQ7jcsDKqKjuF9zdkV0e3RgmT3S8a+fFRK2WFy/ScUaS8efIAS6JTmxNFzUvViJRC3avhELcC8AFT7kQucMd8E7wAPmIwFENpJVTTNlugICKe1fa0AlnWekoY6QJj7imklrU+n+xb7zj6ecDdYEMo4J+7pgQ3JNs8M8/mPFt9j7tTjf3GRLVJkdtcrxhhgdt3dQUSSw7Atwe4WBNMuy1oFI7G23UXuZj1LKtsLeT29mzdjK8Q1/jqP1Jj6tunU=
+  on:
+    branch: master
