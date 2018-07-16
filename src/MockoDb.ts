@@ -1,9 +1,9 @@
+import * as fsCallback from "fs";
+import { MongoClient } from "mongodb";
 import { MongodHelper } from "mongodb-prebuilt";
 import * as path from "path";
-import * as fsCallback from "fs";
-import { promisify } from "util";
-import { MongoClient } from "mongodb";
 import { URL } from "url";
+import { promisify } from "util";
 import { ListDatabasesResult } from "./types/mongodb";
 
 // Wrap in Promise
@@ -44,16 +44,21 @@ export class MockoDb {
 
     await db.executeDbAdminCommand({ shutdown: 1 }).catch(err => {
       const isShutdownError = /connection \d+ to .+ closed/.test(err.message);
-      if (!isShutdownError) throw err;
+      if (!isShutdownError) {
+        throw err;
+      }
     });
   }
 
+  /**
+   * Drops all databases except admin, config, and local.
+   */
   public async reset() {
     const client = await this.getClient();
     const db = client.db();
 
     const result: ListDatabasesResult = await db.admin().listDatabases();
-    const allDbs = result.databases.map(db => db.name);
+    const allDbs = result.databases.map(database => database.name);
 
     const toDrop = allDbs.filter(
       name => !["admin", "config", "local"].includes(name)
@@ -71,9 +76,11 @@ export class MockoDb {
   }
 }
 
-function ensureDir(path: Path) {
-  fs.mkdir(path).catch(err => {
-    if (err.code !== "EEXIST") throw err;
+function ensureDir(dirPath: Path) {
+  fs.mkdir(dirPath).catch(err => {
+    if (err.code !== "EEXIST") {
+      throw err;
+    }
   });
 }
 

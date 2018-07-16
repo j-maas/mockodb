@@ -1,5 +1,5 @@
-import { MockoDb, preload } from "../../src";
 import { MongoClient } from "mongodb";
+import { MockoDb, preload } from "../../src";
 import { ListDatabasesResult } from "../../src/types/mongodb";
 
 describe("mockodb", () => {
