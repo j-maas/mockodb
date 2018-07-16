@@ -45,6 +45,15 @@ describe("test suite", () => {
 });
 ```
 
+Alternatively, for a more direct use inside your CI's script, this package
+exposes the `mockodb-preload` command in its bin:
+
+```bash
+yarn install
+mockodb-preload
+yarn test
+```
+
 ### Download Directory
 
 MockoDB will download the MongoDB binaries into its folder. Therefore you can
