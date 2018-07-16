@@ -1,12 +1,21 @@
 # MockoDB
 
-[![npm](https://img.shields.io/npm/v/mockodb.svg)](https://www.npmjs.com/package/mockodb)
+[![npm](https://img.shields.io/npm/v/mockodb.svg)][npm]
 [![build status](https://travis-ci.org/Y0hy0h/mockodb.svg?branch=master)](https://travis-ci.org/Y0hy0h/mockodb)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://prettier.io/)
 
 In-memory mock for MongoDB in unit tests.
 
 > Inspired by [mongo-unit].
+
+## Installation
+
+MockoDB is [available on NPM][npm].
+
+```bash
+yarn add mockodb
+npm install --save mockodb
+```
 
 ## Usage
 
@@ -60,4 +69,5 @@ MockoDB will download the MongoDB binaries into its folder. Therefore you can
 simply cache your `node_modules` on your CI, making it download the MongoDB
 binaries once on the first run and whenever you clear your cache.
 
+[npm]: https://www.npmjs.com/package/mockodb
 [mongo-unit]: https://github.com/mikhail-angelov/mongo-unit
