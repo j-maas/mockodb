@@ -12,7 +12,7 @@ An in-memory MongoDB as a mock in unit tests.
 
 ```typescript
 import { MockoDb } from "mockodb";
-import { MongoClient } from "mongodb"
+import { MongoClient } from "mongodb";
 
 async function demo() {
   const mockoDb = await MockoDb.boot();
