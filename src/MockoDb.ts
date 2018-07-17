@@ -1,34 +1,37 @@
-import * as fsCallback from "fs";
 import { MongoClient } from "mongodb";
 import { MongodHelper } from "mongodb-prebuilt";
 import * as path from "path";
 import { URL } from "url";
-import { promisify } from "util";
+import { ensureDir, Path, removeDir } from "./fs-utils";
 import { ListDatabasesResult } from "./types/mongodb";
-
-// Wrap in Promise
-const fs = {
-  mkdir: promisify(fsCallback.mkdir)
-};
+import * as getPort from "get-port";
 
 const moduleDir = path.resolve(__dirname, "../");
 
 export class MockoDb {
   public static async boot() {
-    const dataDir = path.join(moduleDir, "mockodb-data");
+    const port = (await getPort({ port: 27017 })).toString();
+    const dataDir = path.join(moduleDir, "mockodb-data", port);
     ensureDir(dataDir);
 
     const mongodHelper = new MongodHelper(
-      ["--dbpath", dataDir, "--storageEngine", "ephemeralForTest"],
+      [
+        "--port",
+        port,
+        "--dbpath",
+        dataDir,
+        "--storageEngine",
+        "ephemeralForTest"
+      ],
       {
         downloadDir: path.join(moduleDir, "mockodb-download")
       }
     );
     await mongodHelper.run();
-    return new MockoDb(mongodHelper, new URL("mongodb://localhost:27017"));
+    return new MockoDb(new URL(`mongodb://localhost:${port}`), dataDir);
   }
 
-  constructor(private mongodHelper: MongodHelper, public url: URL) {}
+  constructor(public url: URL, private dataDir: Path) {}
 
   public async shutdown() {
     const client = await this.getClient();
@@ -40,6 +43,8 @@ export class MockoDb {
         throw err;
       }
     });
+
+    await removeDir(this.dataDir);
   }
 
   /**
@@ -67,13 +72,3 @@ export class MockoDb {
     return MongoClient.connect(this.url.href);
   }
 }
-
-function ensureDir(dirPath: Path) {
-  fs.mkdir(dirPath).catch(err => {
-    if (err.code !== "EEXIST") {
-      throw err;
-    }
-  });
-}
-
-type Path = string;
