@@ -1,4 +1,5 @@
 import * as fsCallback from "fs";
+import getPort = require("get-port");
 import { MongoClient } from "mongodb";
 import { MongodHelper } from "mongodb-prebuilt";
 import * as path from "path";
@@ -15,20 +16,28 @@ const moduleDir = path.resolve(__dirname, "../");
 
 export class MockoDb {
   public static async boot() {
-    const dataDir = path.join(moduleDir, "mockodb-data");
+    const port = (await getPort({ port: 27017 })).toString();
+    const dataDir = path.join(moduleDir, "mockodb-data", port);
     ensureDir(dataDir);
 
     const mongodHelper = new MongodHelper(
-      ["--dbpath", dataDir, "--storageEngine", "ephemeralForTest"],
+      [
+        "--dbpath",
+        dataDir,
+        "--port",
+        port,
+        "--storageEngine",
+        "ephemeralForTest"
+      ],
       {
         downloadDir: path.join(moduleDir, "mockodb-download")
       }
     );
     await mongodHelper.run();
-    return new MockoDb(mongodHelper, new URL("mongodb://localhost:27017"));
+    return new MockoDb(new URL(`mongodb://localhost:${port}`));
   }
 
-  constructor(private mongodHelper: MongodHelper, public url: URL) {}
+  constructor(public url: URL) {}
 
   public async shutdown() {
     const client = await this.getClient();
@@ -68,8 +77,16 @@ export class MockoDb {
   }
 }
 
-function ensureDir(dirPath: Path) {
-  fs.mkdir(dirPath).catch(err => {
+async function ensureDir(dirPath: Path) {
+  fs.mkdir(dirPath).catch(async err => {
+    if (err.code === "ENOENT") {
+      const parent = path.dirname(dirPath);
+      if (parent !== "/") {
+        await ensureDir(parent);
+      }
+      return ensureDir(dirPath);
+    }
+
     if (err.code !== "EEXIST") {
       throw err;
     }
