@@ -18,7 +18,7 @@ export class MockoDb {
   public static async boot() {
     const port = (await getPort({ port: 27017 })).toString();
     const dataDir = path.join(moduleDir, "mockodb-data", port);
-    ensureDir(dataDir);
+    await ensureDir(dataDir);
 
     const mongodHelper = new MongodHelper(
       [
