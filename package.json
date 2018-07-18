@@ -1,6 +1,6 @@
 {
   "name": "mockodb",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "description": "In-memory mock for MongoDB in unit tests.",
   "keywords": [
     "mongodb",
@@ -28,6 +28,7 @@
     "postcommit": "git update-index -g"
   },
   "devDependencies": {
+    "@types/get-port": "^3.2.0",
     "@types/jest": "^23.1.5",
     "@types/mongodb": "^3.1.1",
     "husky": "^0.14.3",
@@ -41,6 +42,7 @@
     "typescript": "^2.9.2"
   },
   "dependencies": {
+    "get-port": "^3.2.0",
     "mongodb": "~3.0.11",
     "mongodb-prebuilt": "y0hy0h/mongodb-prebuilt#1a5821446426570946f42277b145fe7a81baa696"
   }

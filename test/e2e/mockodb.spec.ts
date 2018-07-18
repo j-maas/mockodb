@@ -43,6 +43,22 @@ describe("mockodb", () => {
     );
   });
 
+  it("starts multiple concurrent servers", async () => {
+    const firstMockoDb = await MockoDb.boot();
+    const secondMockoDb = await MockoDb.boot().catch(async err => {
+      await firstMockoDb.shutdown();
+      throw err;
+    });
+
+    expect(firstMockoDb.url).not.toEqual(secondMockoDb.url);
+    await Promise.all([
+      MongoClient.connect(firstMockoDb.url.href),
+      MongoClient.connect(secondMockoDb.url.href)
+    ]);
+
+    await Promise.all([firstMockoDb, secondMockoDb].map(db => db.shutdown()));
+  });
+
   describe("prepared", () => {
     let mockoDb: MockoDb;
 
