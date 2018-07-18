@@ -77,8 +77,16 @@ export class MockoDb {
   }
 }
 
-function ensureDir(dirPath: Path) {
-  fs.mkdir(dirPath).catch(err => {
+async function ensureDir(dirPath: Path) {
+  fs.mkdir(dirPath).catch(async err => {
+    if (err.code === "ENOENT") {
+      const parent = path.dirname(dirPath);
+      if (parent !== "/") {
+        await ensureDir(parent);
+      }
+      return ensureDir(dirPath);
+    }
+
     if (err.code !== "EEXIST") {
       throw err;
     }
