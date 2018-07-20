@@ -5,6 +5,8 @@ import { MongodHelper } from "mongodb-prebuilt";
 import * as path from "path";
 import { URL } from "url";
 import { promisify } from "util";
+import * as uuid from "uuid/v4";
+import { DatabaseHandle } from "./DatabaseHandle";
 import { ListDatabasesResult } from "./types/mongodb";
 
 // Wrap in Promise
@@ -70,6 +72,13 @@ export class MockoDb {
         await client.db(dbName).dropDatabase();
       })
     );
+  }
+
+  public async open(databaseName?: string) {
+    if (!databaseName) {
+      databaseName = uuid();
+    }
+    return new DatabaseHandle(databaseName, this.url);
   }
 
   private async getClient() {

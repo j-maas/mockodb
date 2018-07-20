@@ -31,6 +31,7 @@
     "@types/get-port": "^3.2.0",
     "@types/jest": "^23.1.5",
     "@types/mongodb": "^3.1.1",
+    "@types/uuid": "^3.4.3",
     "husky": "^0.14.3",
     "jest": "^23.4.0",
     "prettier": "^1.13.7",
@@ -44,6 +45,7 @@
   "dependencies": {
     "get-port": "^3.2.0",
     "mongodb": "~3.0.11",
-    "mongodb-prebuilt": "y0hy0h/mongodb-prebuilt#1a5821446426570946f42277b145fe7a81baa696"
+    "mongodb-prebuilt": "y0hy0h/mongodb-prebuilt#1a5821446426570946f42277b145fe7a81baa696",
+    "uuid": "^3.3.2"
   }
 }
