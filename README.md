@@ -26,11 +26,35 @@ import { MongoClient } from "mongodb";
 async function demo() {
   const mockoDb = await MockoDb.boot();
 
-  // You can now connect to the database:
-  const client = await MongoClient.connect(mockoDb.url);
+  // You can now connect to the database.
+  const client = await MongoClient.connect(mockoDb.url.href);
   ...
 
-  // You need to take care of shutting down the db:
+  // At any time you can drop all databases.
+  await mockoDb.reset();
+  ...
+
+  // You need to take care of shutting down the db.
+  await mockoDb.shutdown();
+}
+```
+
+You can also control individual databases.
+
+```typescript
+import { MockoDb } from "mockodb";
+import { MongoClient } from "mongodb";
+
+async function demo() {
+  const mockoDb = await MockoDb.boot();
+  // Open a new database with a random name.
+  const dbHandle = await mockoDb.open();
+  const client = await MongoClient.connect(dbHandle.url.href);
+  ...
+
+  // Reset only that database.
+  await dbHandle.drop();
+
   await mockoDb.shutdown();
 }
 ```
@@ -38,8 +62,8 @@ async function demo() {
 ### Preloading
 
 Note that `MockoDb.boot()` might attempt to download the MongoDB binaries on the
-first run. You can preload those libraries explicitly with the `preload()`
-function:
+first run. You can preload those libraries explicitly before your tests run
+using the `preload()` function:
 
 ```typescript
 import { preload } from "mockodb";
