@@ -39,6 +39,26 @@ async function demo() {
 }
 ```
 
+You can also control individual databases.
+
+```typescript
+import { MockoDb } from "mockodb";
+import { MongoClient } from "mongodb";
+
+async function demo() {
+  const mockoDb = await MockoDb.boot();
+  // Open a new database with a random name.
+  const dbHandle = await mockoDb.open();
+  const client = await MongoClient.connect(dbHandle.url.href);
+  ...
+
+  // Reset only that database.
+  await dbHandle.drop();
+
+  await mockoDb.shutdown();
+}
+```
+
 ### Preloading
 
 Note that `MockoDb.boot()` might attempt to download the MongoDB binaries on the
