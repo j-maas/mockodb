@@ -10,7 +10,8 @@
     "test",
     "testing",
     "in-memory",
-    "fast"
+    "fast",
+    "typescript"
   ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
