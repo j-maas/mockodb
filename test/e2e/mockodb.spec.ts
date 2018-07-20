@@ -104,24 +104,66 @@ describe("mockodb", () => {
       );
 
       const expectedNames = dbs.map(db => db.databaseName);
-      expect(await getActualDatabaseNames()).toEqual(
+      expect(await getActualDatabaseNames(client)).toEqual(
         expect.arrayContaining(expectedNames)
       );
 
       await mockoDb.reset();
 
-      expect(await getActualDatabaseNames()).not.toEqual(
+      expect(await getActualDatabaseNames(client)).not.toEqual(
         expect.arrayContaining(expectedNames)
       );
+    });
 
-      async function getActualDatabaseNames() {
-        const result: ListDatabasesResult = await client
-          .db()
-          .admin()
-          .listDatabases();
+    describe("database", () => {
+      it("opens a database with info", async () => {
+        const dbName = "databaseName";
+        const db = await mockoDb.open(dbName);
+        expect(db.name).toEqual(dbName);
+        // Expect url ends with database path.
+        expect(db.url.href).toMatch(new RegExp(`${db.name}$`));
+      });
 
-        return result.databases.map(db => db.name);
-      }
+      it("opens new databases with a random name", async () => {
+        const db1 = await mockoDb.open();
+        const db2 = await mockoDb.open();
+        expect(db1.name).not.toEqual(db2.name);
+        expect(db1.url).not.toEqual(db2.url);
+      });
+
+      it("drops a database selectively", async () => {
+        const dbHandle = await mockoDb.open();
+        const client = await MongoClient.connect(dbHandle.url.href);
+        const db = client.db();
+        const dbToKeepName = "toKeep";
+        const dbs = [db, client.db(dbToKeepName)];
+        await Promise.all(
+          dbs.map(async database => {
+            const collection = await database.createCollection("e2eTest");
+            await collection.insertOne({ insert: "me" });
+          })
+        );
+
+        const expectedNames = dbs.map(database => database.databaseName);
+        expect(await getActualDatabaseNames(client)).toEqual(
+          expect.arrayContaining(expectedNames)
+        );
+
+        await dbHandle.drop();
+
+        const remainingDbs = await getActualDatabaseNames(client);
+        expect(remainingDbs).not.toContain(dbHandle.name);
+        expect(remainingDbs).toContain(dbToKeepName);
+      });
     });
   });
 });
+
+async function getActualDatabaseNames(client: MongoClient) {
+  const result: ListDatabasesResult = await client
+    .db()
+    .admin()
+    .listDatabases();
+
+  return result.databases.map(db => db.name);
+}
